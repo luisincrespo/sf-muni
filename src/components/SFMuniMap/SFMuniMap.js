@@ -16,7 +16,8 @@ class SFMuniMap extends Component {
       geoPath: null,
       vehicles: null,
       lastRefresh: 0,
-      routeFilter: null
+      selectedRoutes: {},
+      nextCall: null
     };
     this.onRouteFilterChange = this.onRouteFilterChange.bind(this);
   }
@@ -61,13 +62,19 @@ class SFMuniMap extends Component {
       .attr('stroke', 'black')
       .attr('d', geoPath);
 
+    // Save references to path generator and vehicles SVG group into state
     this.setState({
       geoPath,
       vehicles
     });
+  }
 
-    // Periodically draw SF muni vehicle locations
-    this.getSFMuniLocations();
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.vehicles !== this.state.vehicles ||
+        prevState.lastRefresh !== this.state.lastRefresh ||
+        prevState.selectedRoutes !== this.state.selectedRoutes) {
+      this.getSFMuniLocations();
+    }
   }
 
   render() {
@@ -75,22 +82,35 @@ class SFMuniMap extends Component {
       <div className="sf-muni-map">
         <RouteFilter onChange={this.onRouteFilterChange} />
       </div>
-    )
+    );
   }
 
-  onRouteFilterChange(filter) {
+  onRouteFilterChange(selectedRoutes) {
     this.setState({
-      routeFilter: filter
+      selectedRoutes
     });
-    this.getSFMuniLocations()
   }
 
   getSFMuniLocations() {
+    clearTimeout(this.state.nextCall);
+
     const that = this;
     d3.xml(`${NEXTBUS_SF_MUNI_LOCATIONS_URL}&t=${this.state.lastRefresh}`, (xml) => {
       let locations = xml.getElementsByTagName('vehicle');
       locations = Array.from(locations);
 
+      const hasSelectedRoutes = Object.values(that.state.selectedRoutes).find((selected) => {
+        return selected === true;
+      });
+
+      // Filter vehicles based on selected routes if applicable
+      if (hasSelectedRoutes) {
+        locations = locations.filter((location) => {
+          return that.state.selectedRoutes[location.getAttribute('routeTag')];
+        });
+      }
+
+      // Convert data returned by next-bus to GeoJSON features
       locations = locations.map((location) => {
         return {
           type: 'Feature',
@@ -131,14 +151,19 @@ class SFMuniMap extends Component {
         .exit()
         .remove();
 
-      that.setState({
-        lastRefresh: moment().unix()
-      });
-
       // Draw again after 15 seconds
-      setTimeout(() => {
-        that.getSFMuniLocations();
+      const nextCall = setTimeout(() => {
+        that.setState({
+          lastRefresh: moment().unix()
+        });
       }, 15000);
+
+      // We save a reference to the next scheduled call to refresh vehicle locations to be able
+      // to cancel that call if the selected routes change, because in that case we'll immediately
+      // refresh vehicle locations and schedule a new call from that point
+      this.setState({
+        nextCall
+      });
     });
   }
 }
