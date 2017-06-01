@@ -8,7 +8,7 @@ import './RouteFilter.css';
 
 // Constants
 const NEXTBUS_SF_MUNI_ROUTES_URL =
-  'http://webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=sf-muni';
+  '//webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=sf-muni';
 
 class RouteFilter extends Component {
   constructor() {

@@ -19,7 +19,7 @@ import streetsData from '../../data/sfmaps/streets.json';
 
 // Constants
 const NEXTBUS_SF_MUNI_LOCATIONS_URL =
-  'http://webservices.nextbus.com/service/publicXMLFeed?command=vehicleLocations&a=sf-muni'
+  '//webservices.nextbus.com/service/publicXMLFeed?command=vehicleLocations&a=sf-muni'
 
 class SFMuniMap extends Component {
   constructor() {
