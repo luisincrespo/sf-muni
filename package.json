@@ -2,7 +2,6 @@
   "name": "sf-muni",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://luisincrespo.github.io/sf-muni",
   "engines": {
     "node": "7.10.0",
     "npm": "4.2.0"
@@ -17,7 +16,8 @@
     "prop-types": "^15.5.10",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
-    "react-scripts": "1.0.7"
+    "react-scripts": "1.0.7",
+    "serve": "^5.1.5"
   },
   "devDependencies": {
     "gh-pages": "^1.0.0"
@@ -29,6 +29,7 @@
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "postinstall": "npm run build"
+    "postinstall": "npm run build",
+    "serve": "serve -s build"
   }
 }
