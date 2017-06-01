@@ -1,5 +1,10 @@
+// External modules
 import React, { Component } from 'react';
+
+// Components
 import SFMuniMap from '../SFMuniMap/SFMuniMap';
+
+// Styles
 import './App.css';
 
 class App extends Component {

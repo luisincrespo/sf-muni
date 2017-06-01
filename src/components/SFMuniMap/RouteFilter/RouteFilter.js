@@ -1,8 +1,12 @@
+// External modules
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
+
+// Styles
 import './RouteFilter.css';
 
+// Constants
 const NEXTBUS_SF_MUNI_ROUTES_URL =
   'http://webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=sf-muni';
 

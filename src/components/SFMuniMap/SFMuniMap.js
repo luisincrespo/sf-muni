@@ -1,11 +1,19 @@
+// External modules
 import React, { Component } from 'react';
 import * as d3 from 'd3';
 import moment from 'moment';
+
+// Components
 import RouteFilter from './RouteFilter/RouteFilter';
+
+// Styles
 import './SFMuniMap.css';
+
+// Data
 import neighborhoodsData from '../../data/sfmaps/neighborhoods.json';
 import streetsData from '../../data/sfmaps/streets.json';
 
+// Constants
 const NEXTBUS_SF_MUNI_LOCATIONS_URL =
   'http://webservices.nextbus.com/service/publicXMLFeed?command=vehicleLocations&a=sf-muni'
 
