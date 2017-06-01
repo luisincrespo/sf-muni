@@ -1,7 +1,7 @@
 // External modules
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import * as d3 from 'd3';
+import { xml as d3Xml } from 'd3-request';
 
 // Styles
 import './RouteFilter.css';
@@ -20,7 +20,7 @@ class RouteFilter extends Component {
   }
 
   componentDidMount() {
-    d3.xml(NEXTBUS_SF_MUNI_ROUTES_URL, (xml) => {
+    d3Xml(NEXTBUS_SF_MUNI_ROUTES_URL, (xml) => {
       let routes = xml.getElementsByTagName('route');
       routes = Array.from(routes);
 

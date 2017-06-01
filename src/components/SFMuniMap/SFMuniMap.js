@@ -1,6 +1,10 @@
 // External modules
 import React, { Component } from 'react';
-import * as d3 from 'd3';
+import { geoPath as d3GeoPath, geoAlbers as d3GeoAlbers } from 'd3-geo';
+import { select as d3Select } from 'd3-selection';
+import { xml as d3Xml } from 'd3-request';
+import { transition as d3Transition } from 'd3-transition';
+import { easeLinear as d3EaseLinear } from 'd3-ease';
 import moment from 'moment';
 
 // Components
@@ -36,7 +40,7 @@ class SFMuniMap extends Component {
     const height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 
     // Create SVG elements
-    const svg = d3.select('div.sf-muni-map')
+    const svg = d3Select('div.sf-muni-map')
       .append('svg')
       .attr('width', '100%')
       .attr('height', '100%');
@@ -45,11 +49,11 @@ class SFMuniMap extends Component {
     const vehicles = svg.append('g');
 
     // Define map projection
-    const projection = d3.geoAlbers()
+    const projection = d3GeoAlbers()
       .fitSize([width, height], neighborhoodsData);;
 
     // Define path generator
-    const geoPath = d3.geoPath()
+    const geoPath = d3GeoPath()
       .projection(projection)
       .pointRadius(2);
 
@@ -103,7 +107,7 @@ class SFMuniMap extends Component {
     clearTimeout(this.state.nextCall);
 
     const that = this;
-    d3.xml(`${NEXTBUS_SF_MUNI_LOCATIONS_URL}&t=${this.state.lastRefresh}`, (xml) => {
+    d3Xml(`${NEXTBUS_SF_MUNI_LOCATIONS_URL}&t=${this.state.lastRefresh}`, (xml) => {
       let locations = xml.getElementsByTagName('vehicle');
       locations = Array.from(locations);
 
@@ -131,9 +135,9 @@ class SFMuniMap extends Component {
       });
 
       // Transition to be used for moving vehicles
-      const t = d3.transition()
+      const t = d3Transition()
         .duration(750)
-        .ease(d3.easeLinear);
+        .ease(d3EaseLinear);
 
       // Select vehicles
       const vehicleSelection = that.state.vehicles.selectAll('path')
