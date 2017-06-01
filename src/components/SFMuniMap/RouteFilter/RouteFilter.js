@@ -20,11 +20,11 @@ class RouteFilter extends Component {
   }
 
   componentDidMount() {
-    d3Xml(NEXTBUS_SF_MUNI_ROUTES_URL, (xml) => {
+    d3Xml(NEXTBUS_SF_MUNI_ROUTES_URL, xml => {
       let routes = xml.getElementsByTagName('route');
       routes = Array.from(routes);
 
-      routes = routes.map((route) => {
+      routes = routes.map(route => {
         return {
           tag: route.getAttribute('tag'),
           title: route.getAttribute('title')
@@ -47,21 +47,20 @@ class RouteFilter extends Component {
     return (
       <div className="sf-muni-route-filter">
         <b>Filter by route:</b>
-        { this.state.routes.map((route) => {
-            return (
-              <div className="sf-muni-route-filter-option" key={route.tag}>
-                <input
-                  id={route.tag}
-                  name={route.tag}
-                  type="checkbox"
-                  checked={this.state.selected[route.tag] || false}
-                  onChange={this.onToggleRoute(route)}
-                />
-                <label htmlFor={route.tag}>{route.title}</label>
-              </div>
-            );
-          })
-        }
+        {this.state.routes.map(route => {
+          return (
+            <div className="sf-muni-route-filter-option" key={route.tag}>
+              <input
+                id={route.tag}
+                name={route.tag}
+                type="checkbox"
+                checked={this.state.selected[route.tag] || false}
+                onChange={this.onToggleRoute(route)}
+              />
+              <label htmlFor={route.tag}>{route.title}</label>
+            </div>
+          );
+        })}
       </div>
     );
   }
