@@ -106,19 +106,18 @@ class SFMuniMap extends Component {
   getSFMuniLocations() {
     clearTimeout(this.state.nextCall);
 
-    const that = this;
     d3Xml(`${NEXTBUS_SF_MUNI_LOCATIONS_URL}&t=${this.state.lastRefresh}`, (xml) => {
       let locations = xml.getElementsByTagName('vehicle');
       locations = Array.from(locations);
 
-      const hasSelectedRoutes = Object.values(that.state.selectedRoutes).find((selected) => {
+      const hasSelectedRoutes = Object.values(this.state.selectedRoutes).find((selected) => {
         return selected === true;
       });
 
       // Filter vehicles based on selected routes if applicable
       if (hasSelectedRoutes) {
         locations = locations.filter((location) => {
-          return that.state.selectedRoutes[location.getAttribute('routeTag')];
+          return this.state.selectedRoutes[location.getAttribute('routeTag')];
         });
       }
 
@@ -140,7 +139,7 @@ class SFMuniMap extends Component {
         .ease(d3EaseLinear);
 
       // Select vehicles
-      const vehicleSelection = that.state.vehicles.selectAll('path')
+      const vehicleSelection = this.state.vehicles.selectAll('path')
         .data(locations, (v) => v.properties.id);
 
       // Update existing vehicle locations
@@ -148,7 +147,7 @@ class SFMuniMap extends Component {
         .attr('fill', 'red')
         .attr('stroke', 'white')
         .transition(t)
-        .attr('d', that.state.geoPath);
+        .attr('d', this.state.geoPath);
 
       // Show new vehicles
       vehicleSelection
@@ -156,7 +155,7 @@ class SFMuniMap extends Component {
         .append('path')
         .attr('fill', 'red')
         .attr('stroke', 'white')
-        .attr('d', that.state.geoPath);
+        .attr('d', this.state.geoPath);
 
       // Remove no longer existing vehicles
       vehicleSelection
@@ -165,7 +164,7 @@ class SFMuniMap extends Component {
 
       // Draw again after 15 seconds
       const nextCall = setTimeout(() => {
-        that.setState({
+        this.setState({
           lastRefresh: moment().unix()
         });
       }, 15000);
