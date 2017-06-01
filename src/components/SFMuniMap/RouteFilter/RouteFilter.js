@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
+import './RouteFilter.css';
 
 const NEXTBUS_SF_MUNI_ROUTES_URL =
   'http://webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=sf-muni';
@@ -41,16 +42,18 @@ class RouteFilter extends Component {
   render() {
     return (
       <div className="sf-muni-route-filter">
+        <b>Filter by route:</b>
         { this.state.routes.map((route) => {
             return (
               <div className="sf-muni-route-filter-option" key={route.tag}>
-                <label htmlFor={route.tag}>{route.title}</label>
                 <input
+                  id={route.tag}
                   name={route.tag}
                   type="checkbox"
                   checked={this.state.selected[route.tag] || false}
                   onChange={this.onToggleRoute(route)}
                 />
+                <label htmlFor={route.tag}>{route.title}</label>
               </div>
             );
           })

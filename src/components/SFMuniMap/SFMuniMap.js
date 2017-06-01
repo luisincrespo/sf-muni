@@ -133,8 +133,8 @@ class SFMuniMap extends Component {
 
       // Update existing vehicle locations
       vehicleSelection
-        .attr('fill', 'blue')
-        .attr('stroke', '#999')
+        .attr('fill', 'red')
+        .attr('stroke', 'white')
         .transition(t)
         .attr('d', that.state.geoPath);
 
@@ -142,8 +142,8 @@ class SFMuniMap extends Component {
       vehicleSelection
         .enter()
         .append('path')
-        .attr('fill', 'blue')
-        .attr('stroke', '#999')
+        .attr('fill', 'red')
+        .attr('stroke', 'white')
         .attr('d', that.state.geoPath);
 
       // Remove no longer existing vehicles
