@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
 import moment from 'moment';
+import RouteFilter from './RouteFilter/RouteFilter';
 import './SFMuniMap.css';
 import neighborhoodsData from '../../data/sfmaps/neighborhoods.json';
 import streetsData from '../../data/sfmaps/streets.json';
@@ -9,6 +10,17 @@ const NEXTBUS_SF_MUNI_LOCATIONS_URL =
   'http://webservices.nextbus.com/service/publicXMLFeed?command=vehicleLocations&a=sf-muni'
 
 class SFMuniMap extends Component {
+  constructor() {
+    super();
+    this.state = {
+      geoPath: null,
+      vehicles: null,
+      lastRefresh: 0,
+      routeFilter: null
+    };
+    this.onRouteFilterChange = this.onRouteFilterChange.bind(this);
+  }
+
   componentDidMount() {
     // Get viewport width and height
     const width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
@@ -49,17 +61,33 @@ class SFMuniMap extends Component {
       .attr('stroke', 'black')
       .attr('d', geoPath);
 
+    this.setState({
+      geoPath,
+      vehicles
+    });
+
     // Periodically draw SF muni vehicle locations
-    this.getSFMuniLocations(geoPath, vehicles, 0);
+    this.getSFMuniLocations();
   }
 
   render() {
-    return <div className="sf-muni-map"></div>;
+    return (
+      <div className="sf-muni-map">
+        <RouteFilter onChange={this.onRouteFilterChange} />
+      </div>
+    )
   }
 
-  getSFMuniLocations(geoPath, vehicles, lastTime) {
+  onRouteFilterChange(filter) {
+    this.setState({
+      routeFilter: filter
+    });
+    this.getSFMuniLocations()
+  }
+
+  getSFMuniLocations() {
     const that = this;
-    d3.xml(`${NEXTBUS_SF_MUNI_LOCATIONS_URL}&t=${lastTime}`, function(xml) {
+    d3.xml(`${NEXTBUS_SF_MUNI_LOCATIONS_URL}&t=${this.state.lastRefresh}`, (xml) => {
       let locations = xml.getElementsByTagName('vehicle');
       locations = Array.from(locations);
 
@@ -80,7 +108,7 @@ class SFMuniMap extends Component {
         .ease(d3.easeLinear);
 
       // Select vehicles
-      const vehicleSelection = vehicles.selectAll('path')
+      const vehicleSelection = that.state.vehicles.selectAll('path')
         .data(locations, (v) => v.properties.id);
 
       // Update existing vehicle locations
@@ -88,7 +116,7 @@ class SFMuniMap extends Component {
         .attr('fill', 'blue')
         .attr('stroke', '#999')
         .transition(t)
-        .attr('d', geoPath);
+        .attr('d', that.state.geoPath);
 
       // Show new vehicles
       vehicleSelection
@@ -96,16 +124,20 @@ class SFMuniMap extends Component {
         .append('path')
         .attr('fill', 'blue')
         .attr('stroke', '#999')
-        .attr('d', geoPath);
+        .attr('d', that.state.geoPath);
 
       // Remove no longer existing vehicles
       vehicleSelection
         .exit()
         .remove();
 
+      that.setState({
+        lastRefresh: moment().unix()
+      });
+
       // Draw again after 15 seconds
       setTimeout(() => {
-        that.getSFMuniLocations(geoPath, vehicles, moment().unix());
+        that.getSFMuniLocations();
       }, 15000);
     });
   }
